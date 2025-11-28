@@ -3,19 +3,22 @@ const mysql = require("mysql2/promise");
 
 // node-fetch helyes importálása (CommonJS környezetben)
 const fetch = (...args) =>
-  import('node-fetch').then(({ default: fetch }) => fetch(...args));
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 const app = express();
 app.use(express.json());
 
-// IDE KÉSŐBB: RDS helyett először lokális MySQL/MariaDB, 
+const cors = require("cors");
+app.use(cors());
+
+// IDE KÉSŐBB: RDS helyett először lokális MySQL/MariaDB,
 // de a connection stringet már úgy írjuk, mintha "db" lenne a host (docker-compose miatt)
 async function getDbConnection() {
   return await mysql.createConnection({
-    host: "localhost",   // később: RDS endpoint vagy docker-compose service név
+    host: "localhost", // később: RDS endpoint vagy docker-compose service név
     user: "root",
     password: "",
-    database: "weather_notes"
+    database: "weather_notes",
   });
 }
 
@@ -33,25 +36,33 @@ app.post("/add-city", async (req, res) => {
     // időjárás lekérés (OpenWeather – saját API kulcs kell majd)
     const apiKey = "38d1eac1e47fbc0494db1d11a5e2544d";
     const weatherResp = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=hu`
+      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+        city
+      )}&appid=${apiKey}&units=metric&lang=hu`
     );
     const weatherData = await weatherResp.json();
 
     if (weatherResp.status !== 200) {
-      return res.status(400).json({ error: "Nem sikerült lekérni az időjárást", details: weatherData });
+      return res
+        .status(400)
+        .json({
+          error: "Nem sikerült lekérni az időjárást",
+          details: weatherData,
+        });
     }
 
     const conn = await getDbConnection();
     await conn.execute(
-      "INSERT INTO cities (city_name, created_at) VALUES (?, NOW())",
-      [city]
+      "INSERT INTO cities (city_name, degree, created_at) VALUES (?, ?, NOW())",
+      [city, weatherData.main.temp]
     );
+
     await conn.end();
 
     res.json({
       city,
       temp: weatherData.main.temp,
-      description: weatherData.weather[0].description
+      description: weatherData.weather[0].description,
     });
   } catch (err) {
     console.error(err);
@@ -63,7 +74,9 @@ app.post("/add-city", async (req, res) => {
 app.get("/cities", async (req, res) => {
   try {
     const conn = await getDbConnection();
-    const [rows] = await conn.execute("SELECT id, city_name, created_at FROM cities ORDER BY created_at DESC");
+    const [rows] = await conn.execute(
+      "SELECT id, city_name, degree, created_at FROM cities ORDER BY created_at DESC"
+    );
     await conn.end();
     res.json(rows);
   } catch (err) {
