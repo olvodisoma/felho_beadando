@@ -1,62 +1,128 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-    background: #f4f4f4;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
 }
 
 h1 {
     text-align: center;
-}
-
-.input-box, .actions {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-input {
-    padding: 8px;
-    margin-right: 5px;
-}
-
-button {
-    padding: 8px 12px;
-    margin: 3px;
-    background: #2c6bed;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-button:hover {
-    background: #194acb;
-}
-
-#result {
-    margin-top: 10px;
-    font-size: 18px;
-    text-align: center;
-}
-
-#cityCards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    font-size: 36px;
+    margin-bottom: 25px;
 }
 
 .card {
+    background: #ffffff;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+}
+
+.input-card {
+    display: flex;
+    gap: 10px;
+}
+
+.input-card input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #90caf9;
+    border-radius: 8px;
+}
+
+button {
+    padding: 10px 14px;
+    background: #1976d2;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #0d47a1;
+}
+
+.actions-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.topn-box {
+    display: flex;
+    gap: 10px;
+}
+
+#topN {
+    width: 60px;
+    padding: 8px;
+    border: 2px solid #90caf9;
+    border-radius: 8px;
+}
+
+.result-box {
+    min-height: 40px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 18px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+    margin-bottom: 20px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.city-card {
     background: white;
     padding: 15px;
-    width: 220px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.city-title {
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .temp {
+    margin-top: 5px;
+    font-size: 26px;
     font-weight: bold;
-    font-size: 20px;
 }
 
-.temp.hot { color: #e62e00; }
-.temp.cold { color: #0066cc; }
-.temp.warm { color: #ff9933; }
+.temp.hot { color: #e53935; }
+.temp.cold { color: #1e88e5; }
+.temp.warm { color: #fb8c00; }
+
+.date {
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.delete-btn {
+    margin-top: 10px;
+    background: #e53935;
+}
+
+.delete-btn:hover {
+    background: #b71c1c;
+}

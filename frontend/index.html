@@ -7,28 +7,33 @@
 </head>
 <body>
 
-    <h1>Weather Notes</h1>
+<div class="container">
 
-    <div class="input-box">
+    <h1>🌤️ Weather Notes</h1>
+
+    <div class="card input-card">
         <input type="text" id="cityInput" placeholder="Város neve">
-        <button id="addBtn">Hozzáadás</button>
+        <button id="addBtn">➕ Hozzáadás</button>
     </div>
 
-    <div class="actions">
-        <button id="btnHot">Legmelegebb város</button>
-        <button id="btnCold">Leghidegebb város</button>
-        <button id="btnAvg">Átlag hőmérséklet</button>
+    <div class="card actions-card">
+        <button id="btnHot">🔥 Legmelegebb</button>
+        <button id="btnCold">❄️ Leghidegebb</button>
+        <button id="btnAvg">📊 Átlag</button>
 
-        <input type="number" id="topN" placeholder="N" min="1" style="width:60px;">
-        <button id="btnTop">Top N város</button>
+        <div class="topn-box">
+            <input type="number" id="topN" placeholder="N" min="1">
+            <button id="btnTop">🏆 Top N</button>
+        </div>
     </div>
 
-    <h2>Eredmény</h2>
-    <div id="result"></div>
+    <div id="result" class="result-box"></div>
 
-    <h2>Mentett városok</h2>
-    <div id="cityCards"></div>
+    <h2>📌 Mentett városok</h2>
+    <div id="cityCards" class="cards-grid"></div>
 
-    <script src="app.js"></script>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
