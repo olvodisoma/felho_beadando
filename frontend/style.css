@@ -1,22 +1,62 @@
 body {
     font-family: Arial, sans-serif;
     margin: 40px;
+    background: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+}
+
+.input-box, .actions {
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 input {
     padding: 8px;
+    margin-right: 5px;
 }
 
 button {
-    padding: 9px 12px;
+    padding: 8px 12px;
+    margin: 3px;
+    background: #2c6bed;
+    color: white;
+    border: none;
     cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #194acb;
 }
 
 #result {
-    margin-top: 15px;
+    margin-top: 10px;
     font-size: 18px;
+    text-align: center;
 }
 
-ul {
-    margin-top: 10px;
+#cityCards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
 }
+
+.card {
+    background: white;
+    padding: 15px;
+    width: 220px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+}
+
+.temp {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.temp.hot { color: #e62e00; }
+.temp.cold { color: #0066cc; }
+.temp.warm { color: #ff9933; }

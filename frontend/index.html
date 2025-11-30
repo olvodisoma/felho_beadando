@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <h1>Weather Notes</h1>
 
     <div class="input-box">
@@ -13,11 +14,20 @@
         <button id="addBtn">Hozzáadás</button>
     </div>
 
+    <div class="actions">
+        <button id="btnHot">Legmelegebb város</button>
+        <button id="btnCold">Leghidegebb város</button>
+        <button id="btnAvg">Átlag hőmérséklet</button>
+
+        <input type="number" id="topN" placeholder="N" min="1" style="width:60px;">
+        <button id="btnTop">Top N város</button>
+    </div>
+
     <h2>Eredmény</h2>
     <div id="result"></div>
 
     <h2>Mentett városok</h2>
-    <ul id="citiesList"></ul>
+    <div id="cityCards"></div>
 
     <script src="app.js"></script>
 </body>
