@@ -13,9 +13,9 @@ app.use(express.json());
 // Adatbázis kapcsolat
 async function getDbConnection() {
   return await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
+    host: "weather-notes-db.ctyow0ec0gk5.eu-central-1.rds.amazonaws.com",
+    user: "admin",
+    password: "Lakatoslajos03!",
     database: "weather_notes",
   });
 }
@@ -83,19 +83,24 @@ app.get("/cities", async (req, res) => {
 // 🔥 Legutóbbi N város
 app.get("/cities/top/:n", async (req, res) => {
   try {
-    const n = parseInt(req.params.n);
+    // n kinyerése és biztonságos egész számmá alakítása
+    let n = parseInt(req.params.n, 10);
+    if (isNaN(n) || n <= 0) n = 5;          // default 5
+    if (n > 100) n = 100;                  // ne legyen túl nagy
+
     const conn = await getDbConnection();
-    const [rows] = await conn.execute(
-      "SELECT * FROM cities ORDER BY created_at DESC LIMIT ?",
-      [n]
+    const [rows] = await conn.query(
+      `SELECT * FROM cities ORDER BY created_at DESC LIMIT ${n}`
     );
     await conn.end();
+
     res.json(rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Szerver hiba" });
   }
 });
+
 
 // 🔥 Legmelegebb város
 app.get("/cities/hot", async (req, res) => {

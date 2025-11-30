@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:3000";
+const API_BASE = "http://3.123.35.179:3000";
 
 function tempClass(t) {
     if (t >= 25) return "hot";
