@@ -1,57 +1,338 @@
-body {
-    font-family: "Segoe UI", Tahoma, sans-serif;
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+/* =========================================
+   0. RESET
+========================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
+    padding: 0;
 }
 
-.container {
-    width: 90%;
-    max-width: 900px;
+html,
+body {
+    height: 100%;
 }
+
+/* =========================================
+   1. ALAP LAYOUT
+========================================= */
+
+body {
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #020817; /* biztonsági háttér, ha a bg-layer nem töltene be */
+    color: #e3f2fd;
+    padding: 30px 10px;
+    overflow-x: hidden;
+}
+
+/* Fő konténer – app keret */
+.container {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(10, 25, 47, 0.397);
+    backdrop-filter: blur(14px);
+    border-radius: 24px;
+    padding: 24px 22px 30px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(144, 202, 249, 0.3);
+    
+    position: relative;
+    z-index: 1; /* a háttér fölé kerül */
+}
+
+/* =========================================
+   2. TELJES OLDALAS ANIMÁLT HÁTTÉR
+========================================= */
+
+/* A #bg elem: <div id="bg" class="bg-layer theme-default"> */
+.bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: background 0.8s ease;
+}
+
+/* ---- Alap (ha nincs átlag) – semleges éjszakai ég ---- */
+.bg-layer.theme-default {
+    background: linear-gradient(to bottom, #14325b 0%, #061421 40%, #020817 100%);
+}
+
+/* =========================================
+   2.1 TÉL – 5°C ALATT – SŰRŰ, RANDOM HÓVIHAR
+========================================= */
+
+.bg-layer.theme-winter {
+    background: linear-gradient(to bottom, #0b356f 0%, #062039 45%, #020817 100%);
+    overflow: hidden;
+}
+
+/* Hótároló: csak télen látszódjon */
+#snow-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    display: none; /* alapból rejtve */
+}
+
+/* Ha téli a téma, akkor jelenjen meg a hó */
+.bg-layer.theme-winter #snow-container {
+    display: block;
+}
+
+/* Random hópelyhek (JS generálja) */
+.snowflake {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.9;
+    filter: blur(1px);
+    animation-name: snowFallRandom;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+/* véletlen lefele + oldalra sodródás – a konkrét idő / delay JS-ből jön */
+@keyframes snowFallRandom {
+    0% {
+        transform: translateY(-10px) translateX(0);
+    }
+    50% {
+        transform: translateY(50vh) translateX(20px);
+    }
+    100% {
+        transform: translateY(100vh) translateX(-20px);
+    }
+}
+
+/* =========================================
+   2.2 TAVASZ – 5–15°C – FELHŐK + ZÖLD DOMBOK
+========================================= */
+
+.bg-layer.theme-spring {
+    background: linear-gradient(to bottom, #66bb6a 0%, #2e7d32 35%, #1b5e20 60%, #020817 100%);
+}
+
+/* Felhők / köd */
+.bg-layer.theme-spring::before {
+    content: "";
+    position: absolute;
+    width: 170%;
+    height: 55%;
+    left: -35%;
+    top: 5%;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.85) 0, transparent 60%),
+        radial-gradient(circle at 60% 10%, rgba(255, 255, 255, 0.8) 0, transparent 60%),
+        radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.75) 0, transparent 60%);
+    filter: blur(10px);
+    opacity: 0.8;
+    animation: cloudsMove 35s linear infinite;
+}
+
+/* Zöld dombos táj */
+.bg-layer.theme-spring::after {
+    content: "";
+    position: absolute;
+    width: 190%;
+    height: 85%;
+    left: -45%;
+    bottom: -45%;
+    background:
+        radial-gradient(circle at 15% 0%, rgba(129, 199, 132, 0.95) 0, transparent 55%),
+        radial-gradient(circle at 75% -10%, rgba(102, 187, 106, 0.95) 0, transparent 60%),
+        radial-gradient(circle at 45% 10%, rgba(56, 142, 60, 0.98) 0, transparent 65%);
+    filter: blur(8px);
+    opacity: 0.95;
+}
+
+@keyframes cloudsMove {
+    0% {
+        transform: translateX(-10%);
+    }
+    50% {
+        transform: translateX(10%);
+    }
+    100% {
+        transform: translateX(-8%);
+    }
+}
+
+/* =========================================
+   2.3 NYÁR – 15–25°C – NAP + TENGER / DOMBOK
+========================================= */
+
+.bg-layer.theme-summer {
+    background: linear-gradient(to bottom, #29b6f6 0%, #039be5 30%, #00838f 55%, #004d40 75%, #020817 100%);
+}
+
+/* Nap + fényudvar */
+.bg-layer.theme-summer::before {
+    content: "";
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    left: -25%;
+    top: -35%;
+    background:
+        radial-gradient(circle at 80% 15%, rgba(255, 241, 118, 1) 0, rgba(255, 241, 118, 0.5) 12%, transparent 40%),
+        radial-gradient(ellipse at bottom, rgba(3, 169, 244, 0.7) 0, transparent 70%);
+    filter: blur(4px);
+    opacity: 0.98;
+    animation: sunDrift 40s ease-in-out infinite;
+}
+
+
+
+@keyframes sunDrift {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    50% {
+        transform: translateX(-4%) translateY(3%);
+    }
+    100% {
+        transform: translateX(3%) translateY(-2%);
+    }
+}
+
+/* =========================================
+   2.4 HŐHULLÁM – 25°C FELETT – SIVATAG + HŐREMEGÉS
+========================================= */
+
+.bg-layer.theme-heat {
+    background: linear-gradient(to bottom, #ffb74d 0%, #fb8c00 25%, #e65100 50%, #4e342e 75%, #1b1816 100%);
+}
+
+/* Forró levegő remegése */
+.bg-layer.theme-heat::before {
+    content: "";
+    position: absolute;
+    inset: 15% -25% -25% -25%;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.16),
+            rgba(255, 255, 255, 0.16) 2px,
+            transparent 4px,
+            transparent 9px
+        );
+    opacity: 0.55;
+    filter: blur(4px);
+    animation: heatWave 8s ease-in-out infinite;
+}
+
+
+@keyframes heatWave {
+    0% {
+        transform: translateY(0) skewY(0deg);
+    }
+    50% {
+        transform: translateY(-4%) skewY(2deg);
+    }
+    100% {
+        transform: translateY(0) skewY(-1deg);
+    }
+}
+
+/* =========================================
+   3. TIPOGRÁFIA, KÁRTYÁK, GOMBOK
+========================================= */
 
 h1 {
     text-align: center;
-    font-size: 36px;
-    margin-bottom: 25px;
+    font-size: 40px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
 }
 
+h1 span {
+    display: block;
+    font-weight: 300;
+    font-size: 18px;
+    color: #b0bec5;
+    margin-top: 4px;
+}
+
+h2 {
+    margin-top: 25px;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+}
+
+/* Általános kártya-stílus */
 .card {
-    background: #ffffff;
-    padding: 15px 20px;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+    background: rgba(15, 32, 62, 0.397);
+    padding: 15px 18px;
+    margin-bottom: 18px;
+    border-radius: 18px;
+    box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.397);
+    border: 1px solid rgba(120, 144, 156, 0.5);
+    
 }
 
+/* Input rész – város hozzáadása */
 .input-card {
     display: flex;
     gap: 10px;
+    align-items: center;
+
 }
 
 .input-card input {
     flex: 1;
-    padding: 10px;
-    border: 2px solid #90caf9;
-    border-radius: 8px;
+    padding: 11px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(144, 202, 249, 0.397);
+    background: rgba(5, 18, 40, 0.9);
+    color: #e3f2fd;
+    font-size: 15px;
 }
 
+.input-card input::placeholder {
+    color: #90a4ae;
+}
+
+/* Gombok – általános */
 button {
-    padding: 10px 14px;
-    background: #1976d2;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #42a4f56e, #1e88e58f);
     border: none;
-    border-radius: 8px;
+    border-radius: 999px;
     color: white;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.2s ease,
+        opacity 0.15s ease;
+    box-shadow: 0 3px 10px rgba(33, 150, 243, 0.45);
+    white-space: nowrap;
 }
 
 button:hover {
-    background: #0d47a1;
+    transform: translateY(-1px);
+    box-shadow: 0 1px 10px rgba(154, 207, 243, 0.65);
 }
 
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
+    opacity: 0.95;
+}
+
+/* Action gombok (Legmelegebb / Leghidegebb / Átlag / Top N) */
 .actions-card {
     display: flex;
     flex-wrap: wrap;
@@ -60,69 +341,378 @@ button:hover {
     justify-content: center;
 }
 
+.actions-card button {
+    font-size: 14px;
+    padding: 9px 14px;
+}
+
+/* Top N blokk */
 .topn-box {
     display: flex;
-    gap: 10px;
+    gap: 8px;
+    align-items: center;
+    background: rgba(3, 19, 38, 0.397);
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(120, 144, 156, 0.5);
 }
 
 #topN {
-    width: 60px;
-    padding: 8px;
-    border: 2px solid #90caf9;
-    border-radius: 8px;
+    width: 70px;
+    padding: 7px 9px;
+    border-radius: 999px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #e3f2fd;
+    font-size: 14px;
 }
 
+#topN::placeholder {
+    color: #90a4ae;
+}
+
+/* Eredmény doboz */
 .result-box {
-    min-height: 40px;
-    background: #fff;
-    padding: 15px;
-    border-radius: 12px;
-    font-size: 18px;
+    min-height: 50px;
+    background: rgba(3, 22, 48, 0.397);
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 17px;
     text-align: center;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0px 10px 22px rgba(0, 0, 0, 0.45);
     margin-bottom: 20px;
+    border: 1px solid rgba(144, 202, 249, 0.6);
+    animation: fadeInResult 0.3s ease;
+    white-space: pre-line;
 }
 
+@keyframes fadeInResult {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Város kártyák rács */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+    
 }
 
+
+/* Egyedi city card dizájn – üveges, glow-os */
 .city-card {
-    background: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+    background: radial-gradient(
+            circle at top left,
+            rgba(144, 202, 249, 0.18),
+            rgba(2, 13, 30, 0.95)
+        );
+    border-radius: 18px;
+    padding: 15px 14px;
+    box-shadow: 0 15px 28px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(129, 212, 250, 0.35);
     position: relative;
+    overflow: hidden;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.2s ease;
 }
 
+/* Fényfolt overlay a kártyán */
+.city-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.09), transparent 55%);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+/* Hover állapot – enyhe emelkedés */
+.city-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 38px rgba(0, 0, 0, 0.8);
+    border-color: rgba(129, 212, 250, 0.8);
+}
+
+/* Város neve */
 .city-title {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 5px;
 }
 
+/* Hőmérséklet */
 .temp {
-    margin-top: 5px;
-    font-size: 26px;
-    font-weight: bold;
+    margin-top: 6px;
+    font-size: 28px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
 }
 
-.temp.hot { color: #e53935; }
-.temp.cold { color: #1e88e5; }
-.temp.warm { color: #fb8c00; }
+.temp span.unit {
+    font-size: 16px;
+    opacity: 0.8;
+}
 
+/* Hőmérséklet színkódolás */
+.temp.hot {
+    color: #ff7043;
+    text-shadow: 0 0 12px rgba(255, 112, 67, 0.6);
+}
+
+.temp.cold {
+    color: #42a5f5;
+    text-shadow: 0 0 12px rgba(66, 165, 245, 0.7);
+}
+
+.temp.warm {
+    color: #ffca28;
+    text-shadow: 0 0 10px rgba(255, 202, 40, 0.55);
+}
+
+/* Dátum */
 .date {
-    font-size: 13px;
-    color: #666;
-    margin-top: 5px;
+    font-size: 12px;
+    color: #b0bec5;
+    margin-top: 6px;
 }
 
+/* Törlés gomb */
 .delete-btn {
     margin-top: 10px;
-    background: #e53935;
+    background: linear-gradient(135deg, #ef5350, #b71c1c);
+    box-shadow: 0 8px 18px rgba(239, 83, 80, 0.55);
+    font-size: 13px;
 }
 
 .delete-btn:hover {
-    background: #b71c1c;
+    box-shadow: 0 12px 24px rgba(239, 83, 80, 0.75);
+}
+
+/* =========================================
+   SEASON FX – TAVASZ / NYÁR / HŐHULLÁM
+========================================= */
+
+#season-fx {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* -------- TAVASZ: LEVELEK / SZIRMOK -------- */
+
+.leaf {
+    position: absolute;
+    width: 10px;
+    height: 18px;
+    border-radius: 50% 50% 50% 50%;
+    background: radial-gradient(circle at 30% 20%, #ffffff 0, #a5d6a7 25%, #388e3c 80%);
+    opacity: 0.9;
+    transform-origin: center;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.4));
+    animation-name: leafFall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes leafFall {
+    0% {
+        transform: translate3d(0, -10px, 0) rotateZ(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    50% {
+        transform: translate3d(30px, 50vh, 0) rotateZ(90deg);
+    }
+    100% {
+        transform: translate3d(-20px, 100vh, 0) rotateZ(160deg);
+        opacity: 0;
+    }
+}
+
+/* -------- NYÁR: SZENTJÁNOSBOGARAK -------- */
+
+.firefly {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fffde7 0, #ffee58 35%, transparent 70%);
+    box-shadow: 0 0 12px rgba(255, 241, 118, 0.9);
+    opacity: 0;
+    animation-name: fireflyFloat;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fireflyFloat {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    50% {
+        transform: translate3d(20px, -15px, 0);
+    }
+    80% {
+        transform: translate3d(-15px, 10px, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(5px, 0, 0);
+        opacity: 0;
+    }
+}
+
+/* -------- HŐHULLÁM: POR/HŐSZIKRÁK FELFELÉ -------- */
+
+.dust {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffecb3 0, #ffb74d 50%, transparent 80%);
+    opacity: 0.7;
+    filter: blur(0.5px);
+    animation-name: dustRise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes dustRise {
+    0% {
+        transform: translate3d(0, 0, 0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.8;
+    }
+    60% {
+        transform: translate3d(10px, -40vh, 0);
+    }
+    100% {
+        transform: translate3d(-10px, -80vh, 0);
+        opacity: 0;
+    }
+}
+
+
+/* =========================================
+   4. RESZPONZÍV
+========================================= */
+
+@media (max-width: 900px) {
+    .container {
+        padding: 18px 16px 24px;
+        border-radius: 20px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    h1 span {
+        font-size: 16px;
+    }
+
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 20px 6px;
+        align-items: stretch;
+    }
+
+    .container {
+        padding: 16px 12px 22px;
+        border-radius: 18px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    h1 span {
+        font-size: 14px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    .card {
+        padding: 12px 12px;
+        border-radius: 14px;
+    }
+
+    .input-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .input-card input {
+        width: 100%;
+    }
+
+    .actions-card {
+        flex-direction: column;
+    }
+
+    .topn-box {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .topn-box #topN {
+        flex: 1;
+    }
+
+    button {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .result-box {
+        font-size: 15px;
+        padding: 12px 10px;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .city-card {
+        padding: 12px 12px;
+        border-radius: 14px;
+    }
+
+    .city-title {
+        font-size: 17px;
+    }
+
+    .temp {
+        font-size: 24px;
+    }
 }
